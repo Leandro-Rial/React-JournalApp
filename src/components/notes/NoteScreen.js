@@ -1,20 +1,69 @@
-import React from 'react'
-import NotesAppBar from './NotesAppBar'
+import React, { useEffect } from "react";
+import { useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { activeNote, startDeleting } from "../../actions/notes";
+import useForm from "../../hooks/useForm";
+import NotesAppBar from "./NotesAppBar";
 
 const NoteScreen = () => {
-    return (
-        <div className="notes__main-content">
-            <NotesAppBar />
-            <div className="note__content">
-                <input type="text" placeholder="Best Place" className="notes__title-input" autoComplete="off" />
-                <textarea placeholder="In my dreams" className="notes__textarea"></textarea>
+  const dispatch = useDispatch();
 
-                <div className="notes__image">
-                    <img src="https://s.france24.com/media/display/0851897a-e20a-11eb-b871-005056a97e36/07-10%20CA%20Foto%20Principal.jpeg" alt="messi" />
-                </div>
-            </div>
-        </div>
-    )
-}
+  const { active: note } = useSelector((state) => state.notes);
 
-export default NoteScreen
+  const [formValues, handleInputChange, reset] = useForm(note);
+
+  const { body, title, id } = formValues;
+
+  const activeId = useRef(note.id);
+
+  useEffect(() => {
+    if (note.id !== activeId.current) {
+      reset(note);
+      activeId.current = note.id;
+    }
+  }, [note, reset]);
+
+  useEffect(() => {
+    dispatch(activeNote(formValues.id, { ...formValues }));
+  }, [formValues, dispatch]);
+
+  const handleDelete = () => {
+    dispatch(startDeleting(id));
+  };
+
+  return (
+    <div className="notes__main-content">
+      <NotesAppBar />
+      <div className="note__content">
+        <input
+          type="text"
+          className="notes__title-input"
+          placeholder="Best Place"
+          name="title"
+          value={title}
+          onChange={handleInputChange}
+          autoComplete="off"
+        />
+        <textarea
+          className="notes__textarea"
+          placeholder="In my dreams"
+          name="body"
+          value={body}
+          onChange={handleInputChange}
+        ></textarea>
+
+        {note.url && (
+          <div className="notes__image">
+            <img src={note.url} alt="imagen" />
+          </div>
+        )}
+      </div>
+
+      <button className="btn btn-danger" onClick={handleDelete}>
+        Delete
+      </button>
+    </div>
+  );
+};
+
+export default NoteScreen;

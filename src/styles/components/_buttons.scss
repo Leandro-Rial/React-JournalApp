@@ -6,7 +6,7 @@
   font-size: 12px;
   padding: 7px 10px 7px 10px;
 
-  transition: color .3s ease;
+  transition: color 0.3s ease;
 
   &:focus {
     outline: none;
@@ -29,8 +29,17 @@
   }
 }
 
+.btn-danger {
+  background-color: red;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken($color: red, $amount: 10);
+  }
+}
+
 .btn-block {
-    width: 100%;
+  width: 100%;
 }
 
 .google-btn {

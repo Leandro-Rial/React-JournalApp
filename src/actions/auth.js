@@ -1,7 +1,8 @@
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import { types } from "../types/types";
 import { firebase, googleAuthProvider } from "../firebase/firebaseConfig";
 import { FinishLoading, StartLoading } from "./ui";
+import { noteLogout } from "./notes";
 
 export const startLoginEmailPassword = (email, password) => {
   return (dispatch) => {
@@ -16,18 +17,18 @@ export const startLoginEmailPassword = (email, password) => {
       .catch((err) => {
         console.log(err);
         dispatch(FinishLoading());
-        Swal.fire('Fail', err.message, 'error')
+        Swal.fire("Fail", err.message, "error");
       });
-    };
   };
-  
-  export const startRegisterWithEmailPasswordName = (email, password, name) => {
-    return (dispatch) => {
+};
+
+export const startRegisterWithEmailPasswordName = (email, password, name) => {
+  return (dispatch) => {
     dispatch(StartLoading());
     firebase
-    .auth()
-    .createUserWithEmailAndPassword(email, password)
-    .then(async ({ user }) => {
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(async ({ user }) => {
         await user.updateProfile({ displayName: name });
         dispatch(login(user.uid, user.displayName));
         dispatch(FinishLoading());
@@ -35,7 +36,7 @@ export const startLoginEmailPassword = (email, password) => {
       .catch((err) => {
         console.log(err);
         dispatch(FinishLoading());
-        Swal.fire('Fail', err.message, 'error')
+        Swal.fire("Fail", err.message, "error");
       });
   };
 };
@@ -61,6 +62,7 @@ export const startLogout = () => {
     await firebase.auth().signOut();
 
     dispatch(logout());
+    dispatch(noteLogout());
   };
 };
 
